@@ -23,7 +23,7 @@ A ternary_search(const std::function<R(A)> f, A left, A right, const A& precisio
 	}
 }
 
-inline const double f(const double x)
+inline const double f(const double& x)
 {
 	return (-17.5356 * x * x) + (134.56 * x) + 53.7788;
 }
