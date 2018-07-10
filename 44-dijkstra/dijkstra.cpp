@@ -46,7 +46,7 @@ int main ()
 	v[4].push_back({3, 1});
 	v[3].push_back({4, 1});
 
-	std::vector<long long> result(dijkstra(v, 0));
+	std::vector<long long> result(dijkstra(v, 0)); // z pomoca konstruktora kopiujacego
 	for (const auto i : result)
 		std::cout << i << std::endl;
 
