@@ -7,7 +7,7 @@ Build command
 -------------
 
 ```bash
-g++-7 -Wall -Wextra - Wpedantic -O3 --std=c++17 -o a.out main.cpp -lsfml-graphics -lsfml-window -lsfml-system
+g++-7 -Wall -Wextra -Wpedantic -O3 --std=c++17 -o a.out main.cpp -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 Sample result
