@@ -45,7 +45,7 @@ int main (int argc, char ** argv) {
 		for (uint it_data = 0; it_data < data.size(); ++it_data) {
 			for (uint bit = 1 << 7; bit > 0; bit >>= 1) {
 				uint color = image.getPixel(x, y).toInteger();
-				(data[it_data] & bit) ? color |= 1 << 7 : color &= ~(1 << 7);
+				(data[it_data] & bit) ? color |= 1 << 2 : color &= ~(1 << 2);
 				image.setPixel(x, y, sf::Color(color));
 				x++;
 				if (x >= max_x) {
@@ -76,7 +76,7 @@ int main (int argc, char ** argv) {
 
 		for (uint y = 0; y < max_y; ++y) {
 			for (uint x = 0; x < max_x; ++x) {
-				c |= (image.getPixel(x, y).toInteger() & (1 << 7)) >> cnt;
+				c |= ((image.getPixel(x, y).toInteger() & (1 << 2)) >> 2) << (7 - cnt);
 				cnt++;
 				if (cnt > 8) {
 					if (c == '~')
