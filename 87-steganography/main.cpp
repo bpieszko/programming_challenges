@@ -1,10 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <bitset>
 
 using uint = unsigned;
+
+
+const std::vector<uint> color_bit{0, 1, 8, 9, 16, 17, 24, 25};
 
 int main (int argc, char ** argv) {
 	if (argc == 1 || (argv[1] != std::string("--encode") && argv[1] != std::string("--decode")) || 
@@ -43,18 +47,17 @@ int main (int argc, char ** argv) {
 		uint x = 0, y = 0;
 
 		for (uint it_data = 0; it_data < data.size(); ++it_data) {
-			for (uint bit = 1 << 7; bit > 0; bit >>= 1) {
-				uint color = image.getPixel(x, y).toInteger();
-				(data[it_data] & bit) ? color |= 1 << 2 : color &= ~(1 << 2);
-				image.setPixel(x, y, sf::Color(color));
-				x++;
-				if (x >= max_x) {
-					x = 0;
-					y++;
-					if (y >= max_y) {
-						std::cout << "Error: Data length is too long or image is too small." << std::endl;
-						return 1;
-					}
+			uint color = image.getPixel(x, y).toInteger();
+			for (int i = 0; i < 8; ++i)
+				(data[it_data] & (1 << i)) ? color |= (1 << (color_bit[i])) : color &= ~(1 << (color_bit[i]));
+			image.setPixel(x, y, sf::Color(color));
+			++x;
+			if (x >= max_x) {
+				x = 0;
+				y++;
+				if (y >= max_y) {
+					std::cout << "Error: Data length is too long or image is too small." << std::endl;
+					return 1;
 				}
 			}
 		}
@@ -68,25 +71,21 @@ int main (int argc, char ** argv) {
 		const uint max_y = image.getSize().y;
 
 		std::string data;
-
-		uint cnt = 0;
-		unsigned char c = 1;
-
-		bool read = false;
+		bool read_flag = false;
 
 		for (uint y = 0; y < max_y; ++y) {
 			for (uint x = 0; x < max_x; ++x) {
-				c |= ((image.getPixel(x, y).toInteger() & (1 << 2)) >> 2) << (7 - cnt);
-				cnt++;
-				if (cnt > 8) {
-					if (c == '~')
-						read ^= 1;
-					else if (read)
-						data += (unsigned char)(c);
-
-					cnt = 1;
-					c = 0;
-				}
+				std::bitset<8> bit_c;
+				uint color = image.getPixel(x, y).toInteger();
+				for (int i = 0; i < 8; ++i)
+					if (color & (1 << color_bit[i])) 
+						bit_c.set(i);
+				unsigned long l = bit_c.to_ulong();
+				unsigned char c = static_cast<unsigned char>(l);
+				if (c == '~')
+					read_flag ^= 1;
+				else if (read_flag)
+					data += c;
 			}
 		}
 		std::ofstream ostr_output(argv[3], std::ios::out);
@@ -99,3 +98,10 @@ int main (int argc, char ** argv) {
 	
 	return 0;
 }
+
+
+/* 
+ 1  1  0  0  0  0  0  0  1  1  0  0  0  0  0  0  1  1  0  0  0  0  0  0  1  1  0  0  0  0  0  0 
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 
+
+*/
