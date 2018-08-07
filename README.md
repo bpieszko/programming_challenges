@@ -7,4 +7,5 @@
 - [x] 44 - Dijkstra algorithm
 - [x] 62 - Linked list
 - [x] 65 - Ulam spiral
+- [x] 87 - Steganography
 - [x] 95 - Binary and Ternary Search
