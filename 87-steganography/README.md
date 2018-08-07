@@ -4,7 +4,7 @@ Appliaction to encode and decode data in images.
 
 ## Building
 ```
-g++-7 --std=c++17 main.cpp -o app.e -Wall -Wextra -Wpedantic -O3 -Wno-address -lsfml-grpahics -lsfml-window -lsfml-system
+g++-7 --std=c++17 main.cpp -o app.e -Wall -Wextra -Wpedantic -O3 -Wno-address -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 ## Using
