@@ -15,7 +15,7 @@ To encode:
 
 To decode:
 ```
-./app.e --encode image.png data.txt output.png
+./app.e --decode image.png output.txt
 ```
 
 ## Result
