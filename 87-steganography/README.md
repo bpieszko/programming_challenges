@@ -19,5 +19,5 @@ To decode:
 ```
 
 ## Result
-Image without encoded data on right and with encoded data on left.
+Image without encoded data on right and with encoded data on left.<br/>
 <img src="tests/hairbynsb3.png" alt="Without encoded data" /><img src="tests/output2.png" alt="With encoded data" />
