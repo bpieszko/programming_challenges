@@ -1,4 +1,4 @@
-# STEGANOGRAPHY
+# STEGANOGRAPHY C++
 
 Appliaction to encode and decode data in images.
 
