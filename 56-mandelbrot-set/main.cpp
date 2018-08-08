@@ -53,19 +53,24 @@ void fractal(window<int> & scr, window<double> & fract, int iter_max, std::vecto
 }
 
 void mandelbrot() {
+
+	// CONFIG BEGIN
+
 	double X, Y, R;
 	X = -6.490308e-1;
-Y = -4.455151e-1;
-R = 1.7E-6;
+	Y = -4.455151e-1;
+	R = 1.7E-6;
+	int iter_max = 550;
+	const char *fname = "mandelbrot7.png";
+	bool smooth_color = true;
+
+	// CONFIG END
 
 	window<int> scr(0, 512, 0, 512);
 	window<double> fract(X, X + R, Y, Y + R);
 
 	auto func = [](Complex z, Complex c) -> Complex { return z * z + c; };
 
-	int iter_max = 550;
-	const char *fname = "mandelbrot7.png";
-	bool smooth_color = true;
 	std::vector<int> colors(scr.size());
 
 	fractal(scr, fract, iter_max, colors, func, fname, smooth_color);
