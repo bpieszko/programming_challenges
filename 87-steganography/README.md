@@ -1,10 +1,10 @@
-# STEGANOGRAPHY
+# STEGANOGRAPHY C++
 
 Appliaction to encode and decode data in images.
 
 ## Building
 ```
-g++-7 --std=c++17 main.cpp -o app.e -Wall -Wextra -Wpedantic -O3 -Wno-address -lsfml-grpahics -lsfml-window -lsfml-system
+g++-7 --std=c++17 main.cpp -o app.e -Wall -Wextra -Wpedantic -O3 -Wno-address -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 ## Using
@@ -15,7 +15,7 @@ To encode:
 
 To decode:
 ```
-./app.e --encode image.png data.txt output.png
+./app.e --decode image.png output.txt
 ```
 
 ## Result
