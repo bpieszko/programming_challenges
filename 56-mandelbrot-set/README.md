@@ -6,7 +6,7 @@ g++-7 --std=c++17 -O3 save_image.cpp utils.cpp main.cpp -lfreeimage
 ```
 
 ## Using
-Change values between CONFIG BEGIN and CONFIG END to manipulate zoom, iterations etc.
+Change values between CONFIG BEGIN and CONFIG END in main.cpp to manipulate zoom, iterations etc.
 ```
 ./a.out
 ```
