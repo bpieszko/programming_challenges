@@ -2,8 +2,8 @@
 #define CONFIG_HPP
 
 #define TITLE 	 		"Mandelbrot"
-#define MAX_ITER 		500
-#define WIN_SIZE 		512
+#define MAX_ITER 		10000
+#define WIN_SIZE 		1024
 #define FNAME	 		"mandelbrot.png"
 #define SMOOTH	 		true
 #define APPROX_SIZE 	16

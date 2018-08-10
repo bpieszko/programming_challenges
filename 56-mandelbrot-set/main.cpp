@@ -104,11 +104,9 @@ void fillElements(sf::Texture & texture, sf::Sprite & sprite,
 void updateSprite(sf::Texture & texture, sf::Sprite & sprite, std::vector<bool> & flags) {
 	if (image_mutex.try_lock()) {
 		if (flags[1]) {
-			std::cerr << "Trying to load image... ";
 			texture.loadFromFile(FNAME);
 			sprite.setTexture(texture);
 			flags[1] = false;
-			std::cerr << "ok" << std::endl;
 		}
 		image_mutex.unlock();
 	}
@@ -176,7 +174,6 @@ void zoomOut(std::stack<std::tuple<double, double, double>> & zoom_coords) {
 }
 
 void threadRenderImage(const double a, const double z, const double r, std::vector<bool> & flags) {
-	std::cerr << "Trying to render image... ";
 	window<int> scr(0, WIN_SIZE, 0, WIN_SIZE);
 	window<double> fract(a, a + r, z - r, z);
 
@@ -187,8 +184,6 @@ void threadRenderImage(const double a, const double z, const double r, std::vect
 	fractal(scr, fract, MAX_ITER, colors, func, FNAME, SMOOTH);
 	image_mutex.unlock();
 	flags[1] = true;
-	std::cerr << "ok" << std::endl;
-	std::cerr << "    a=" << a << " z=" << z << " r=" << r << std::endl;
 }
 
 void renderImage(std::stack<std::tuple<double, double, double>> & zoom_coords, std::vector<bool> & flags) {
