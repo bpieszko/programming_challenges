@@ -1,16 +1,26 @@
+// STD
 #include <iostream>
 #include <complex>
 #include <vector>
 #include <chrono>
 #include <functional>
-#include <SFML/Graphics.hpp>
 #include <thread>
+#include <stack>
+#include <mutex>
+#include <bitset>
 
+// SFML
+#include <SFML/Graphics.hpp>
+
+// Own
 #include "window.hpp"
 #include "save_image.hpp"
 #include "utils.hpp"
+#include "config.hpp"
 
 using Complex = std::complex<double>;
+
+std::mutex image_mutex;
 
 Complex scale(window<int> & scr, window<double> & fr, Complex c) {
 	Complex aux(c.real() / (double)scr.width() * fr.width() + fr.x_min(), c.imag() / (double)scr.height() * fr.height() + fr.y_min());
@@ -37,10 +47,6 @@ void get_number_iterations(window<int> &scr, window<double> &fract, int iter_max
 			colors[k] = escape(c, iter_max, func);
 			++k;
 		}
-		if (progress < (int)(i * 100.0 / scr.y_max())) {
-			progress = (int)(i * 100.0 / scr.y_max());
-			//std::cout << progress << "%" << std::endl;
-		}
 	}
 }
 
@@ -49,138 +55,214 @@ void fractal(window<int> & scr, window<double> & fract, int iter_max, std::vecto
 	auto start = std::chrono::steady_clock::now();
 	get_number_iterations(scr, fract, iter_max, colors, func);
 	auto end = std::chrono::steady_clock::now();
-	//std::cout << "Time to generate " << fname << " = " << std::chrono::duration<double, std::milli> (end - start).count() << "[ms]" << std::endl;
-
 	plot(scr, colors, iter_max, fname, smooth_color);
 }
 
-void f_thread() {
-	int iter_max1 = 5000;
-	const char *fname1 = "mandelbrot.png";
-	bool smooth_color1 = true;
-	window<int> scr1(0, 512, 0, 512);
-	window<double> fract1(-2, 2, -2, 2);
-	auto func1 = [](Complex z, Complex c) -> Complex { return z * z + c; };
-	std::vector<int> colors1(scr1.size());
-	fractal(scr1, fract1, iter_max1, colors1, func1, fname1, smooth_color1);
+void fillSprite(sf::Texture & texture, sf::Sprite & sprite) {
+	texture.loadFromFile(FNAME);
+	sprite.setTexture(texture);
 }
 
+void fillSelection(const sf::Vector2i & selection_start, const sf::Vector2i & selection_end, sf::RectangleShape & selection) {
+	selection.setSize(sf::Vector2f(0, 0));
+	selection.setFillColor(sf::Color::Transparent);
+	selection.setOutlineColor(sf::Color::White);
+	selection.setOutlineThickness(1);
+	selection.setPosition(sf::Vector2f(selection_start.x, selection_start.y));
+}
 
-void f_thread2(sf::RenderWindow & ren, double & a, double & z, double & r, bool & ok) {
-	while (ren.isOpen()) {
-		int iter_max = 5000;
-		const char *fname = "mandelbrot.png";
-		bool smooth_color = true;
-
-		window<int> scr(0, 512, 0, 512);
-		window<double> fract(a, a + r, z - r, z);
-
-		auto func = [](Complex z, Complex c) -> Complex { return z * z + c; };
-		std::vector<int> colors(scr.size());
-		if (ok == true)
-			continue;
-		else {
-			ok = true;
-			fractal(scr, fract, iter_max, colors, func, fname, smooth_color);
-			ok = false;
-		}
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+void fillApproximation(sf::Font & font, sf::Text & approximation) {
+	try {
+		if (!font.loadFromFile("International.ttf"))
+			throw "Cannot load font file.";
+		approximation.setFont(font);
+		approximation.setString("1");
+		approximation.setCharacterSize(APPROX_SIZE);
+		approximation.setColor(sf::Color::White);
+		approximation.setPosition(sf::Vector2f(APPROX_X, APPROX_Y));
+	}
+	catch (const std::string & e) {
+		std::cerr << e << std::endl;
 	}
 }
 
-double A = 0, B = 512, a = -2, b = 2, x, y, r, z;
+void fillElements(sf::Texture & texture, sf::Sprite & sprite,
+				  const sf::Vector2i & selection_start, const sf::Vector2i & selection_end, sf::RectangleShape & selection,
+				  sf::Font & font, sf::Text & approximation) {
+	fillSprite(texture, sprite);
+	fillSelection(selection_start, selection_end, selection);
+	fillApproximation(font, approximation);
+}
+
+void updateSprite(sf::Texture & texture, sf::Sprite & sprite, std::vector<bool> & flags) {
+	if (image_mutex.try_lock()) {
+		if (flags[1]) {
+			std::cerr << "Trying to load image... ";
+			texture.loadFromFile(FNAME);
+			sprite.setTexture(texture);
+			flags[1] = false;
+			std::cerr << "ok" << std::endl;
+		}
+		image_mutex.unlock();
+	}
+}
+
+void updateSelection(const sf::RenderWindow & render, const sf::Vector2i & selection_start, sf::RectangleShape & selection) {
+	selection.setSize(sf::Vector2f(std::abs(sf::Mouse::getPosition(render).x - selection_start.x), std::abs(sf::Mouse::getPosition(render).y - selection_start.y)));
+	selection.setPosition(sf::Vector2f(std::min(selection_start.x, sf::Mouse::getPosition(render).x), std::min(selection_start.y, sf::Mouse::getPosition(render).y)));
+}
+
+void updateApproximation(sf::Text & approximation, const std::stack<std::tuple<double, double, double>> & zoom_coords) {
+	approximation.setString(std::to_string(4.0 / std::get<2>(zoom_coords.top())));
+}
+
+void updateElements(const sf::RenderWindow & render,
+					sf::Texture & texture, sf::Sprite & sprite,
+					const sf::Vector2i & selection_start, const sf::Vector2i & selection_end, sf::RectangleShape & selection,
+					sf::Text & approximation,
+					const std::stack<std::tuple<double, double, double>> & zoom_coords,
+					std::vector<bool> & flags) {
+	updateSprite(texture, sprite, flags);
+	updateSelection(render, selection_start, selection);
+	updateApproximation(approximation, zoom_coords);
+}
+
+void beginSelection(sf::Vector2i & selection_start, std::vector<bool> & flags, const sf::RenderWindow & render) {
+	selection_start = sf::Mouse::getPosition(render);
+	flags[0] = true;
+}
+
+void endSelection(sf::Vector2i & selection_start, sf::Vector2i & selection_end, std::vector<bool> & flags, const sf::RenderWindow & render) {
+	selection_end = sf::Mouse::getPosition(render);
+	flags[0] = false;
+}
+
+void zoomIn(sf::Vector2i & selection_start, sf::Vector2i & selection_end, std::stack<std::tuple<double, double, double>> & zoom_coords) {
+	try {
+		if (selection_start.x < 0 || selection_start.x >= WIN_SIZE ||
+			selection_start.y < 0 || selection_start.y >= WIN_SIZE)
+			throw "Position of beginning of selection is outside window!";
+		if (selection_end.x < 0 || selection_end.x >= WIN_SIZE ||
+			selection_end.y < 0 || selection_end.y >= WIN_SIZE)
+			throw "Position of end of selection is outside window!";
+
+		double x0 = std::get<0>(zoom_coords.top());
+		double y0 = std::get<1>(zoom_coords.top());
+		double r  = std::get<2>(zoom_coords.top());
+
+		double new_x0 = x0 + r * selection_start.x / WIN_SIZE;
+		double new_y0 = y0 - r * selection_start.y / WIN_SIZE;
+
+		double tmp = x0 + r * selection_end.x / WIN_SIZE;
+		r = tmp - new_x0;
+
+		zoom_coords.push({new_x0, new_y0, r});
+	}
+	catch (const std::string & e) {
+		std::cerr << e << std::endl;
+	}
+}
+
+void zoomOut(std::stack<std::tuple<double, double, double>> & zoom_coords) {
+	if (zoom_coords.size() > 1)
+		zoom_coords.pop(); 
+}
+
+void threadRenderImage(const double a, const double z, const double r, std::vector<bool> & flags) {
+	std::cerr << "Trying to render image... ";
+	window<int> scr(0, WIN_SIZE, 0, WIN_SIZE);
+	window<double> fract(a, a + r, z - r, z);
+
+	auto func = [](Complex z, Complex c) -> Complex { return z * z + c; };
+	std::vector<int> colors(scr.size());
+
+	image_mutex.lock();
+	fractal(scr, fract, MAX_ITER, colors, func, FNAME, SMOOTH);
+	image_mutex.unlock();
+	flags[1] = true;
+	std::cerr << "ok" << std::endl;
+	std::cerr << "    a=" << a << " z=" << z << " r=" << r << std::endl;
+}
+
+void renderImage(std::stack<std::tuple<double, double, double>> & zoom_coords, std::vector<bool> & flags) {
+	std::thread t(threadRenderImage, std::get<0>(zoom_coords.top()), std::get<1>(zoom_coords.top()), std::get<2>(zoom_coords.top()), std::ref(flags));
+	t.detach();
+}
 
 int main () {
-	sf::RenderWindow render(sf::VideoMode(512, 512), "Mandelbrot set", sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow render(sf::VideoMode(WIN_SIZE, WIN_SIZE), TITLE, sf::Style::Close);
 	render.setFramerateLimit(60);
 
-	bool ok = false;
+	std::vector<bool> flags(2, false);
+	std::stack<std::tuple<double, double, double>> zoom_coords;
+	zoom_coords.push({-2, 2, 4});
 
-	sf::Texture texture;
-	sf::Sprite sprite;
+	std::mutex image_mutex;
 
-	sf::Vector2i start, end;
+	sf::Texture 		texture;
+	sf::Sprite			sprite;
+	sf::Vector2i		selection_start;
+	sf::Vector2i		selection_end;
+	sf::RectangleShape	selection;
+	sf::Font			font;
+	sf::Text 			approximation;
+	sf::Event			event;
 
+	fillElements(texture, sprite, selection_start, selection_end, selection, font, approximation);
 
-	std::thread first(f_thread);
-	first.join();
+	renderImage(zoom_coords, flags);
 
-	a = -2;
-	z = 2;
-	r = 4;
-
-	std::thread second(f_thread2, std::ref(render), std::ref(a), std::ref(z), std::ref(r), std::ref(ok));
-
-	texture.loadFromFile("mandelbrot.png");
-	sprite.setTexture(texture);
-	bool pressed = false;
 	while (render.isOpen()) {
-		//std::cout << sf::Mouse::getPosition(render).x << " " << sf::Mouse::getPosition(render).y << std::endl;
-		sf::Event event;
 		while (render.pollEvent(event)) {
-			if (event.type == sf::Event::Closed)
-				render.close();
-			if (event.type == sf::Event::KeyPressed)
-				if (event.key.code == sf::Keyboard::Escape)
+			switch (event.type) {
+				case sf::Event::Closed:
 					render.close();
-			if (event.type == sf::Event::MouseButtonPressed)
-				if (event.mouseButton.button == sf::Mouse::Button::Left) {
-					std::cout << "Pressed! ";
-					std::cout << sf::Mouse::getPosition(render).x << " " << sf::Mouse::getPosition(render).y << std::endl;
-					start = sf::Mouse::getPosition(render);
-					pressed = true;
-				}
-			if (event.type == sf::Event::MouseButtonReleased) {
-				if (event.mouseButton.button == sf::Mouse::Button::Left) {
-					if (sf::Mouse::getPosition(render).x >= 0 && sf::Mouse::getPosition(render).x < 512 &&
-						sf::Mouse::getPosition(render).y >= 0 && sf::Mouse::getPosition(render).x < 512 &&
-						start.x >= 0 && start.x < 512 && start.y >= 0 && start.y < 512) {
-						pressed = false;
-						std::cout << "Released!" << std::endl;
-						std::cout << start.x << " " << start.y << std::endl;
-						std::cout << sf::Mouse::getPosition(render).x << " " << sf::Mouse::getPosition(render).y << std::endl;
-
-						end = sf::Mouse::getPosition(render);
-
-						double na = a + (b - a) * (double)start.x / (double)512;
-						double nb = a + (b - a) * (double)end.x / (double)512;
-
-						r = nb - na;
-
-						z = z - (b - a) * (double)start.y / (double)512;
-
-						a = na;
-						b = nb;
-
-						std::cout << "x: " << a << " " << a + r << " y: " << z - r << " " << z << std::endl;
+					break;
+				case sf::Event::KeyPressed:
+					switch (event.key.code) {
+						case sf::Keyboard::Escape:
+							render.close();
+							break;
+						default:
+							break;
 					}
-				}
+					break;
+				case sf::Event::MouseButtonPressed:
+					switch (event.mouseButton.button) {
+						case sf::Mouse::Button::Left:
+							beginSelection(selection_start, flags, render);
+							break;
+						case sf::Mouse::Button::Right:
+							zoomOut(zoom_coords);
+							break;
+						default:
+							break;
+					}
+					break;
+				case sf::Event::MouseButtonReleased:
+					switch (event.mouseButton.button) {
+						case sf::Mouse::Button::Left:
+							endSelection(selection_start, selection_end, flags, render);
+							zoomIn(selection_start, selection_end, zoom_coords);
+							renderImage(zoom_coords, flags);
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 
-		if (!ok) {
-			ok = true;
-			texture.loadFromFile("mandelbrot.png");
-			sprite.setTexture(texture);
-			ok = false;
-		}
-
-		sf::RectangleShape rect;
-		if (pressed == true) {
-			rect.setSize(sf::Vector2f(sf::Mouse::getPosition(render).x - start.x, sf::Mouse::getPosition(render).y - start.y));
-			rect.setFillColor(sf::Color::Transparent);
-			rect.setOutlineColor(sf::Color::White);
-			rect.setOutlineThickness(1);
-			rect.setPosition(start.x, start.y);
-		}
-
+		updateElements(render, texture, sprite, selection_start, selection_end, selection, approximation, zoom_coords, flags);
+		
 		render.clear();
 		render.draw(sprite);
-		render.draw(rect);
+		if (flags[0])
+			render.draw(selection);
+		render.draw(approximation);
 		render.display();
 	}
-
-	second.join();
-
 	return 0;
 }
