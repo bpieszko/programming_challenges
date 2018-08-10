@@ -29,20 +29,29 @@ Complex scale(window<int> & scr, window<double> & fr, Complex c) {
 
 int escape(Complex c, int iter_max, const std::function<Complex(Complex, Complex)> & func) {
 	Complex z(0);
+	double zrsqr = 0;
+	double zisqr = 0;
+	
 	int iter = 0;
-	while (abs(z) < 2.0 && iter < iter_max) {
-		z = func(z, c);
-		++iter;
+	while (zrsqr + zisqr <= 4.0 && iter < iter_max) {
+		z.imag((z.real() + z.imag()) * (z.real() + z.imag()) - zrsqr - zisqr);
+		z.imag(z.imag() + c.imag());
+		z.real(zrsqr - zisqr + c.real());
+		zrsqr = z.real() * z.real();
+		zisqr = z.imag() * z.imag();
+		iter++;
 	}
 	return iter;
 }
 
 void get_number_iterations(window<int> &scr, window<double> &fract, int iter_max, std::vector<int> &colors,
 	const std::function<Complex( Complex, Complex)> &func) {
-	int k = 0, progress = -1;
-	for (int i = scr.y_min(); i < scr.y_max(); ++i) {
-		for (int j = scr.x_min(); j < scr.x_max(); ++j) {
-			Complex c((double)j, (double)i);
+	
+	int k = 0, i, j;
+	Complex c;
+	for (i = scr.y_min(); i < scr.y_max(); ++i) {
+		for (j = scr.x_min(); j < scr.x_max(); ++j) {
+			c = {(double)j, (double)i};
 			c = scale(scr, fract, c);
 			colors[k] = escape(c, iter_max, func);
 			++k;
@@ -52,9 +61,7 @@ void get_number_iterations(window<int> &scr, window<double> &fract, int iter_max
 
 void fractal(window<int> & scr, window<double> & fract, int iter_max, std::vector<int> & colors,
 	const std::function<Complex(Complex, Complex)> & func, const char * fname, bool smooth_color) {
-	auto start = std::chrono::steady_clock::now();
 	get_number_iterations(scr, fract, iter_max, colors, func);
-	auto end = std::chrono::steady_clock::now();
 	plot(scr, colors, iter_max, fname, smooth_color);
 }
 
@@ -113,7 +120,7 @@ void updateSelection(const sf::RenderWindow & render, const sf::Vector2i & selec
 }
 
 void updateApproximation(sf::Text & approximation, const std::stack<std::tuple<double, double, double>> & zoom_coords) {
-	approximation.setString(std::to_string(4.0 / std::get<2>(zoom_coords.top())));
+	approximation.setString(std::to_string((unsigned long long)(4.0 / std::get<2>(zoom_coords.top()))));
 }
 
 void updateElements(const sf::RenderWindow & render,
@@ -234,6 +241,7 @@ int main () {
 							break;
 						case sf::Mouse::Button::Right:
 							zoomOut(zoom_coords);
+							renderImage(zoom_coords, flags);
 							break;
 						default:
 							break;
