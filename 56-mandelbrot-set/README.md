@@ -11,7 +11,7 @@ Change values in config.hpp to manipulate consts.
 ./a.out
 ```
 
-<img src=images/app.gif" />
+<img src="images/app.gif" />
 
 ## Some Mandelbrot set zooms
 <img src="images/mandelbrot.png" height="250" width="250" hscape="0" /><img src="images/mandelbrot3.png" height="250" width="250" hscape="0" /><img src="images/mandelbrot4.png" height="250" width="250" hscape="0" /><img src="images/mandelbrot5.png" height="250" width="250" hscape="0" /><img src="images/mandelbrot6.png" height="250" width="250" hscape="0" /><img src="images/mandelbrot7.png" height="250" width="250" hscape="0" />
