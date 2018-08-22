@@ -1,0 +1,2 @@
+TITLE=pewien tytul strony internetowej
+ARTICLE=pewien artykul<br />wielo linijkowy powinien<br />byc
