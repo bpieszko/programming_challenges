@@ -10,6 +10,6 @@
 - [x] 52 - Web crawler
 - [x] 62 - Linked list
 - [x] 65 - Ulam spiral
-= [x] 84 - Simple paint program
+- [x] 84 - Simple paint program
 - [x] 87 - Steganography
 - [x] 95 - Binary and Ternary Search
