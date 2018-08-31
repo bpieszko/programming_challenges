@@ -8,6 +8,7 @@
 - [x] 44 - Dijkstra algorithm
 - [x] 50 - Tetris
 - [x] 52 - Web crawler
+- [x] 56 - Mandelbrot
 - [x] 62 - Linked list
 - [x] 65 - Ulam spiral
 - [x] 84 - Simple paint program
