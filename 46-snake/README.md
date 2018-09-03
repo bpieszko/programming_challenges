@@ -9,3 +9,6 @@ g++-7 --std=c++17 -o snake.e main.cpp -lsfml-graphics -lsfml-window -lsfml-syste
 ```
 ./snake.e
 ```
+
+## Game
+<img src="snake.png"/>
