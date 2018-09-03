@@ -5,6 +5,7 @@
 - [x] 01 - Higher/lower, heads/tails
 - [x] 02 - Temperature converter
 - [x] 03 - Calculate age in seconds
+- [x] 04 - Encryption/decryption algorithm
 - [x] 09 - Love calculator
 - [x] 11 - Password generator
 - [x] 37 - Static website generator
@@ -22,7 +23,6 @@
 
 ## To do
 - [ ] 00 - Name generator
-- [ ] 04 - Encryption/decryption algorithm
 - [ ] 05 - FizzBuzz
 - [ ] 06 - Rock, paper, scissors
 - [ ] 07 - Project Euler
