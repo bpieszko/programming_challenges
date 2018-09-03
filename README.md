@@ -2,6 +2,7 @@
 /g/'s programming_challenges
 
 ## Done
+- [x] 01 - Higher/lower, heads/tails
 - [x] 03 - Calculate age in seconds
 - [x] 09 - Love calculator
 - [x] 11 - Password generator
@@ -20,7 +21,6 @@
 
 ## To do
 - [ ] 00 - Name generator
-- [ ] 01 - Higher/lower, heads/tails
 - [ ] 02 - Temperature converter
 - [ ] 04 - Encryption/decryption algorithm
 - [ ] 05 - FizzBuzz
