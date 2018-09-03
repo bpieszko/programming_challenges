@@ -5,6 +5,7 @@
 - [x] 09 - Love calculator
 - [x] 10 - Password generator
 - [x] 37 - Static Website Generator
+- [x] 41 - Image viewer
 - [x] 44 - Dijkstra algorithm
 - [x] 50 - Tetris
 - [x] 52 - Web crawler
