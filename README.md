@@ -1,6 +1,7 @@
 # programming_challenges
 /g/'s programming_challenges
 
+- [ ] 00 - Name generator
 - [x] 03 - Calculate age in seconds
 - [x] 09 - Love calculator
 - [x] 10 - Password generator
