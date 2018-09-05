@@ -9,6 +9,7 @@
 - [x] 09 - Love calculator
 - [x] 11 - Password generator
 - [x] 16 - Reverse a string
+- [x] 19 - Count words in a string
 - [x] 37 - Static website generator
 - [x] 41 - Image viewer
 - [x] 43 - Dijkstra's algorithm
@@ -36,7 +37,6 @@
 - [ ] 15 - Collatz conjecture
 - [ ] 17 - Eulerian path
 - [ ] 18 - Simple file explorer
-- [ ] 19 - Count words in a string
 - [ ] 20 - Minesweeper
 - [ ] 21 - Connect four
 - [ ] 22 - BMI calculator
