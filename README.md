@@ -48,7 +48,7 @@
 - [ ] 29 - Factorial
 - [ ] 30 - Cipher encryption/decryption tool
 - [ ] 31 - Blackjack
-- [ ] 32 - DUngeons & Dragons with AI
+- [ ] 32 - Dungeons & Dragons with AI
 - [ ] 33 - Generate ASCII tree
 - [ ] 34 - Genetic algorithm on polygons
 - [ ] 35 - Benford's law
