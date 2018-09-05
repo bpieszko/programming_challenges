@@ -8,6 +8,7 @@
 - [x] 04 - FizzBuzz
 - [x] 09 - Love calculator
 - [x] 11 - Password generator
+- [x] 16 - Reverse a string
 - [x] 37 - Static website generator
 - [x] 41 - Image viewer
 - [x] 43 - Dijkstra's algorithm
@@ -33,7 +34,6 @@
 - [ ] 13 - Haiku generator
 - [ ] 14 - Magic eight ball
 - [ ] 15 - Collatz conjecture
-- [ ] 16 - Reverse a string
 - [ ] 17 - Eulerian path
 - [ ] 18 - Simple file explorer
 - [ ] 19 - Count words in a string
