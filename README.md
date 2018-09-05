@@ -5,6 +5,7 @@
 - [x] 01 - Higher/lower, heads/tails
 - [x] 02 - Temperature converter
 - [x] 03 - Calculate age in seconds
+- [x] 04 - FizzBuzz
 - [x] 09 - Love calculator
 - [x] 11 - Password generator
 - [x] 37 - Static website generator
@@ -22,8 +23,7 @@
 
 ## To do
 - [ ] 00 - Name generator
-- [ ] 04 - Encryption/decryption algorithm
-- [ ] 05 - FizzBuzz
+- [ ] 05 - Encryption/decryption algorithm
 - [ ] 06 - Rock, paper, scissors
 - [ ] 07 - Project Euler
 - [ ] 08 - Hangman
@@ -48,7 +48,7 @@
 - [ ] 29 - Factorial
 - [ ] 30 - Cipher encryption/decryption tool
 - [ ] 31 - Blackjack
-- [ ] 32 - DUngeons & Dragons with AI
+- [ ] 32 - Dungeons & Dragons with AI
 - [ ] 33 - Generate ASCII tree
 - [ ] 34 - Genetic algorithm on polygons
 - [ ] 35 - Benford's law
@@ -102,7 +102,7 @@
 - [ ] 95 - Sierpiński triangle
 - [ ] 96 - Dot & cross product of two vectors
 - [ ] 97 - Little Man computer simulation
-- [ ] 98 - List interpreter
+- [ ] 98 - Lisp interpreter
 - [ ] 99 - Enigma simulator with a configuration file
 
 
