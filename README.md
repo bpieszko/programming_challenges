@@ -16,6 +16,7 @@
 - [x] 52 - Web crawler
 - [x] 56 - Mandelbrot
 - [x] 62 - Linked list
+- [x] 64 - Random image generator
 - [x] 65 - Ulam spiral
 - [x] 84 - Simple paint program
 - [x] 87 - Steganography
@@ -72,7 +73,6 @@
 - [ ] 60 - Flow in a network
 - [ ] 61 - Credential validator
 - [ ] 63 - Mastermind
-- [ ] 64 - Random image generator
 - [ ] 66 - Klingon translator
 - [ ] 67 - Prime number generator using a sieve
 - [ ] 68 - Markov chains
