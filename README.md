@@ -16,6 +16,7 @@
 - [x] 46 - Snake
 - [x] 50 - Tetris
 - [x] 52 - Web crawler
+- [x] 55 - RPN calculator
 - [x] 56 - Mandelbrot
 - [x] 62 - Linked list
 - [x] 64 - Random image generator
@@ -66,7 +67,6 @@
 - [ ] 51 - Conway's Game of Life
 - [ ] 53 - Text editor
 - [ ] 54 - RSS feed reader
-- [ ] 55 - RPN calculator
 - [ ] 57 - Sorting algorithms with visualisation
 - [ ] 58 - Custom markup -> HTML converter
 - [ ] 59 - N queens problem
