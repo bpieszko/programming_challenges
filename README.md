@@ -102,7 +102,7 @@
 - [ ] 95 - Sierpiński triangle
 - [ ] 96 - Dot & cross product of two vectors
 - [ ] 97 - Little Man computer simulation
-- [ ] 98 - List interpreter
+- [ ] 98 - Lisp interpreter
 - [ ] 99 - Enigma simulator with a configuration file
 
 
