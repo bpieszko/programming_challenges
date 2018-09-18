@@ -63,7 +63,7 @@ int main (int argc, char ** argv) {
 		}
 		image.saveToFile(argv[4]);
 	}
-	else { // --decode
+	else if (argv[1] == std::string("--decode")) {
 		sf::Image image;
 		image.loadFromFile(argv[2]);
 
